@@ -13,6 +13,8 @@ class MemoryController:
         self.protector = protector
 
     def write(self, bank, row):
+        # TODO is keeping count realistic? Are we sure we want to separate the protector
+        # and controller logic?
         self.writecounts[bank] += 1
         # TODO implement write blocking with a queue? or just a refresh ig
         if self.protector:
@@ -45,6 +47,8 @@ class MemoryController:
     def get_banksize(self):
         return self.memory.get_banksize()
 
+    # I don't understand how flip works and I don't understand
+    # why we're summing TODO ask sofia
     def get_flip_number(self, bank):
         flip = 0
         for row in range(self.get_banksize()):
