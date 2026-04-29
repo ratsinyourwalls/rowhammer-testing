@@ -3,17 +3,22 @@ from memory import Memory
 
 class MemoryController:
     # The MemoryController will refresh every refreshcycle writes or skips.
-    def __init__(self, banks, banksize, refreshcycle, protector):
+    def __init__(self, banks, banksize, refreshcycle):
         self.memory = Memory(banks, banksize)
         self.refreshcycle = refreshcycle
         self.writecounts = [0] * banks
+        self.protector = None
+
+    def register_protector(self, protector):
         self.protector = protector
 
     def write(self, bank, row):
         self.writecounts[bank] += 1
-        if self.protector.notifywrite(bank, row):
-            self.memory.write(bank, row)
+        # TODO implement write blocking with a queue? or just a refresh ig
+        if self.protector:
+            self.protector.notifywrite(bank, row)
 
+        self.memory.write(bank, row)
         if self.writecounts[bank] >= self.refreshcycle:
             self.refresh(bank)
 
@@ -28,7 +33,9 @@ class MemoryController:
     def refresh(self, bank):
         if self.writecounts[bank] >= self.refreshcycle:
             self.update_stats()
-            self.protector.notifyrefresh()
+            if self.protector:
+                self.protector.notifyrefresh()
+
             self.writecounts[bank] = 0
             self.memory.refresh(bank)
 

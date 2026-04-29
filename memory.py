@@ -1,7 +1,7 @@
 class Memory:
     # A memory has banks independent banks, and banksize rows whithin each one
     def __init__(self, banks, banksize):
-        self.banks = [] * banks
+        self.banks = [[]] * banks
         for i in range(banks):
             self.banks[i] = [0] * banksize
 
