@@ -10,7 +10,7 @@
 
 ## Comandi
 Una bank riceve comandi: 
-- ACTIVATE (bank, row) che apre la row e  la mette nel row buffer (equivalente
+- ACTIVATE (bank, row) che apre la row e la mette nel row buffer (equivalente
   a un refresh)
 - READ/WRITE (bank) legge/scrive dal row buffer
 - PRECHARGE (bank) azzera il row buffer, chiudendo la word line
