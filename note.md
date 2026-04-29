@@ -25,4 +25,10 @@ un refresh ogni 64ms/8192 = 7.8us
 
 ## Errori di Disturbo
 
-Quando
+Quando una row viene chiusa e aperta ripetutamente, alcune celle in row adiacenti perdono carica a una velocità maggiore del normale. Se non riescono a tenerla per 64ms, si effettua un errore di disturbo.
+
+Le celle si dividono in 
+- Celle rappresentano 0 con 0 e 1 con 1, un errore di disturbanza è 1 -> 0
+- Anticelle rappresentano 0 con 1 e 1 con 0, un errore di disturbanza è 0 -> 1
+A seconda del produttore, ram possono contenere principalmente celle,
+anticelle, o un misto.
