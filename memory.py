@@ -16,9 +16,8 @@ class Memory:
             return 0
         return self.banks[bank][row]
 
-    def refresh(self):
-        for i in range(self.get_banks()):
-            self.banks[i] = [0] * self.get_banksize()
+    def refresh(self, bank):
+        self.banks[bank] = [0] * self.get_banksize()
 
     def write(self, bank, row):
         self.banks[bank][row] += 1
