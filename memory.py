@@ -1,4 +1,5 @@
 class Memory:
+    # A memory has banks independent banks, and banksize rows whithin each one
     def __init__(self, banks, banksize):
         self.banks = [] * banks
         for i in range(banks):
@@ -23,6 +24,8 @@ class Memory:
         self.banks[bank][row] += 1
 
     def flip_probability(self, bank, row):
+        # TODO change the probabilities to something reasonable (and not
+        # hardcoded)
         probabilities = [0.1, 0.01, 0.001]
 
         s = 0
