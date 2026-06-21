@@ -72,7 +72,7 @@ class Memory:
         self.update_neighbours(bank, row)
 
     def update_neighbours(self, bank, row):
-        weights = [0.2, 0.05, 0.001]
+        weights = [1, 0.5, 0.2]
         for dist, w in enumerate(weights):
             self.update_probability(bank, row + (dist + 1), w)
             self.update_probability(bank, row - (dist + 1), w)
@@ -101,7 +101,7 @@ class Memory:
         if row % 2 == 1:
             return 0
 
-        THRESHOLD = 50
+        THRESHOLD = 500
         MAXW = 100
 
         w = self.probs[bank][row]
@@ -114,4 +114,4 @@ class Memory:
         return self.stat_flips[bank]
 
     def reset_stat_flips(self):
-        self.stat_flips = [0] * nbanks
+        self.stat_flips = [0] * self.banks

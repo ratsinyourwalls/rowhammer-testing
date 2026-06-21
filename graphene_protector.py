@@ -6,7 +6,7 @@ class GrapheneProtector:
         self.controller = controller
 
         # After how many accesses should we refresh?
-        self.treshold = 50
+        self.treshold = 500
         # On refresh triggeered, distance of neighbours to refresh
         self.ref_dist = 1
 

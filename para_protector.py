@@ -5,7 +5,7 @@ class ParaProtector:
     def __init__(self, controller):
         self.controller = controller
         # Random chance of refreshing neighbours on read
-        self.ref_p = 0.02
+        self.ref_p = 0.01
         # Distance of neighbours to refresh
         self.ref_dist = 1
 

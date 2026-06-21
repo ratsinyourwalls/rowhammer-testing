@@ -9,78 +9,74 @@ from graphene_protector import GrapheneProtector
 from gui import MemoryGUI
 
 BANKSIZE = 64
-REFRESHCYCLE = 1000
+REFRESHCYCLE = 5000
 controller = MemoryController(banks=4, banksize=BANKSIZE, refreshcycle=REFRESHCYCLE)
 protector = None
 gui = MemoryGUI(controller)
 controller.register_gui(gui)
 
 
-def normal_access(controller):
-    bank = 1
+def normal_access(controller, bank):
 
     # stay in the same region
     if random.random() < 0.8:
-        row = normal_access.current_row + 1
-        if row >= normal_access.region_start + normal_access.region_size:
-            row = normal_access.region_start
+        row = normal_access.current_row[bank] + 1
+        if row >= normal_access.region_start[bank] + normal_access.region_size[bank]:
+            row = normal_access.region_start[bank]
 
     elif random.random() < 0.95:
-        row = normal_access.region_start
+        row = normal_access.region_start[bank]
     else:
-        normal_access.region_size = 30
-        max_start = controller.get_banksize() - normal_access.region_size
-        normal_access.region_start = random.randint(0, max_start)
-        row = normal_access.region_start
+        normal_access.region_size[bank] = 30
+        max_start = controller.get_banksize() - normal_access.region_size[bank]
+        normal_access.region_start[bank] = random.randint(0, max_start)
+        row = normal_access.region_start[bank]
 
-    normal_access.current_row = row
+    normal_access.current_row[bank] = row
     controller.read(bank, row)
 
 
 # initial region
-normal_access.region_start = 0
-normal_access.region_size = 100
-normal_access.current_row = 0
+normal_access.region_start = [0]*4
+normal_access.region_size = [100]*4
+normal_access.current_row = [0]*4
 
 
-def random_access(controller):
-    bank = 1
+def random_access(controller, bank):
     row = random.randint(0, controller.get_banksize() - 1)
     controller.read(bank, row)
 
 
-def discovery_access(controller):
-    bank = 1
-    row = discovery_access.current_row
+def discovery_access(controller, bank):
+    row = discovery_access.current_row[bank]
     controller.read(bank, row)
 
-    discovery_access.counter += 1
-    if discovery_access.counter >= 300:
-        discovery_access.counter = 0
-        discovery_access.current_row = (row + 1) % controller.get_banksize()
+    discovery_access.counter[bank] += 1
+    if discovery_access.counter[bank] >= 300:
+        discovery_access.counter[bank] = 0
+        discovery_access.current_row[bank] = (row + 1) % controller.get_banksize()
 
 
-discovery_access.current_row = 0
-discovery_access.counter = 0
+discovery_access.current_row = [0]*4
+discovery_access.counter = [0]*4
 
 
-def attack_access(controller, d=1):
-    bank = 1
-    row = attack_access.target_row
-    if attack_access.hammered_time >= REFRESHCYCLE:
-        attack_access.target_row = random.randint(0, controller.get_banksize())
-        attack_access.hammered_time = 0
-        if attack_access.target_row % 2 == 1:
-            attack_access.target_row -= 1
+def attack_access(controller, bank, d=1):
+    row = attack_access.target_row[bank]
+    if attack_access.hammered_time[bank] >= REFRESHCYCLE*2:
+        attack_access.target_row[bank] = random.randint(0, controller.get_banksize())
+        attack_access.hammered_time[bank] = 0
+        if attack_access.target_row[bank] % 2 == 1:
+            attack_access.target_row[bank] -= 1
 
     for i in range(1, (d + 1)):
         controller.read(bank, row - (i))
         controller.read(bank, row + (i))
-        attack_access.hammered_time += 2
+        attack_access.hammered_time[bank] += 2
 
 
-attack_access.target_row = 50  # example
-attack_access.hammered_time = 0
+attack_access.target_row = [50]*4  # example
+attack_access.hammered_time = [0]*4
 
 
 HELP_MESSAGE = """Usage: test.py <strategy>
@@ -120,14 +116,15 @@ def main():
     while gui.running:
         mode = gui.mode
         sleep_time = gui.sleep_time
-        if mode == "normal":
-            normal_access(controller)
-        elif mode == "random":
-            random_access(controller)
-        elif mode == "discover":
-            discovery_access(controller)
-        elif mode == "attack":
-            attack_access(controller, 2)
+        for b in range(4):
+            if mode == "normal":
+                normal_access(controller, b)
+            elif mode == "random":
+                random_access(controller, b)
+            elif mode == "discover":
+                discovery_access(controller, b)
+            elif mode == "attack":
+                attack_access(controller,b, 1)
         gui.draw()
         time.sleep(sleep_time)
 
