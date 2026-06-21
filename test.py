@@ -11,7 +11,7 @@ from gui import MemoryGUI
 BANKSIZE = 64
 controller = MemoryController(banks=4, banksize=BANKSIZE, refreshcycle=1000)
 protector = None
-#controller.register_protector(protector)
+# controller.register_protector(protector)
 gui = MemoryGUI(controller)
 controller.register_gui(gui)
 
@@ -82,20 +82,19 @@ attack_access.target_row = 50  # example
 attack_access.hammered_time = 0
 
 
-HELP_MESSAGE="""Usage: test.py <strategy>
+HELP_MESSAGE = """Usage: test.py <strategy>
 
 Available strategies:
 none          - No protection
   para          - PARA protection
   graphene      - Graphene protection
-  blockhammer   - Blockhammer protection (Pending implementation)"""
+  """
 
 # Mapping strategies to their respective classes simplifies expansion
 STRATEGY_MAP = {
     "none": DefaultProtector,
     "para": ParaProtector,
     "graphene": GrapheneProtector,
-    "blockhammer": DefaultProtector, # TODO: Change to BlockhammerProtector once implemented
 }
 
 
@@ -111,12 +110,12 @@ def main():
     if strategy not in STRATEGY_MAP:
         print("Unkown strategy: defaulting to None.")
         strategy = "none"
-    
-    protector_class =STRATEGY_MAP[strategy]
+
+    protector_class = STRATEGY_MAP[strategy]
     protector = protector_class(controller)
-    
+
     controller.register_protector(protector)
-    
+
     print("Use the GUI to switch modes")
     while gui.running:
         mode = gui.mode

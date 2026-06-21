@@ -1,3 +1,4 @@
+import time
 import tkinter as tk
 
 
@@ -9,6 +10,7 @@ class MemoryGUI:
         self.mode_index = 0
         self.MODES = ["normal", "random", "discover", "attack"]
         self.mode = self.MODES[self.mode_index]
+        self._lastcall = 0
 
         self.row_flipped = [
             [False for _ in range(controller.get_banksize())]
@@ -67,6 +69,12 @@ class MemoryGUI:
         return f"#{r:02x}{g:02x}{b:02x}"
 
     def draw(self):
+        if time.time_ns() - self._lastcall >= 1600000 * 2:
+            self._lastcall = time.time_ns()
+        else:
+            print("Skipping frame")
+            return
+
         self.canvas.delete("all")
 
         row_height = 4
