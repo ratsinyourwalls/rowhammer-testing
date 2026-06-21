@@ -21,6 +21,8 @@ class Memory:
         self.flipped = [[False] * banksize for _ in range(nbanks)]
         self.gui = None
 
+        self.stat_flips = [0] * nbanks
+
     # return number of banks
     def get_banks(self):
         return self.banks
@@ -47,7 +49,7 @@ class Memory:
     # just puts all bits back to 0
     # this represents resetting the activation counter
     def refresh(self, bank):
-        #print("MEMORY REFRESH")
+        # print("MEMORY REFRESH")
         self.accesses[bank] = [0] * self.get_banksize()
         self.probs[bank] = [0] * self.get_banksize()
         # flips shouldn't get erased on refresh
@@ -58,6 +60,7 @@ class Memory:
         print("FLIP RESET")
         for bank in range(self.get_banks()):
             self.flipped[bank] = [False] * self.get_banksize()
+            self.stat_flips[bank] = 0
             self.refresh(bank)
 
     # read doesn't actually read the value, it counts one access to the row
@@ -90,6 +93,8 @@ class Memory:
         if p > random.random():
             print("FLIP at", bank, row)
             print("Probability:", p, "row accesses:", self.accesses[bank][row])
+
+            self.stat_flips[bank] += 1
             self.gui.notify_flip(bank, row)
             self.flipped[bank][row] = True
 
@@ -105,3 +110,6 @@ class Memory:
             return 0
         else:
             return min((w - THRESHOLD) / MAXW, 1.0)
+
+    def get_stat_flips(self, bank):
+        return self.stat_flips[bank]

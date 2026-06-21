@@ -31,8 +31,8 @@ class GrapheneProtector:
 
             # Refresh rows at increasing distance
             for d in range(self.ref_dist):
-                self.controller.refresh_row(bank, row + (d + 1))
-                self.controller.refresh_row(bank, row - (d + 1))
+                self.controller.safety_refresh(bank, row + (d + 1))
+                self.controller.safety_refresh(bank, row - (d + 1))
 
     # Refresh event
     def notify_refresh(self, bank):

@@ -1,4 +1,3 @@
-import random
 from memory import Memory
 from gui import MemoryGUI as gui
 
@@ -15,6 +14,11 @@ class MemoryController:
         self.protector = None
         self.gui = None
 
+        self.stat_reads = [0] * banks
+        self.stat_safety_refresh = [0] * banks
+        self.stat_refresh = [0] * banks
+        self.stat_flips = [0] * banks
+
     def register_protector(self, protector):
         self.protector = protector
 
@@ -23,6 +27,8 @@ class MemoryController:
         self.memory.register_gui(gui)
 
     def read(self, bank, row):
+        self.stat_reads[bank] += 1
+
         # refresh every tot reads on a bank
         self.readcounts[bank] += 1
         if self.protector:
@@ -32,7 +38,9 @@ class MemoryController:
         if self.readcounts[bank] >= self.refreshcycle:
             self.refresh(bank)
 
-    def refresh_row(self, bank, row):
+    def safety_refresh(self, bank, row):
+        self.stat_safety_refresh[bank] += 1
+
         self.memory.read(bank, row)
         gui.notify_refresh(bank, row)
 
@@ -45,7 +53,7 @@ class MemoryController:
             self.refresh(bank)
 
     def refresh(self, bank):
-        self.update_stats()
+        self.stat_refresh[bank] += 1
         if self.protector:
             self.protector.notify_refresh(bank)
         if self.gui:
@@ -64,20 +72,14 @@ class MemoryController:
     def get_banksize(self):
         return self.memory.get_banksize()
 
-    # TODO consider getting rid of this
-    # TODO consider changing it for something else
-    def get_flip_number(self, bank):
-        flips = 0
-        for row in range(self.get_banksize()):
-            p = self.memory.flip_probability(bank, row)
-            if p > random.random():
-                print("FLIP at", bank, row)
-                print("Probability", p, "near accesses:", self.memory.get_ac(bank, row))
-                self.gui.notify_flip(bank, row)
-                flips += 1
-        return flips
+    def get_stat_reads(self, bank):
+        return self.stat_reads[bank]
 
-    # Will be called once each refresh.
-    def update_stats(self):
-        # TODO generate a report somehow
-        pass
+    def get_stat_refresh(self, bank):
+        return self.stat_refresh[bank]
+
+    def get_stat_safety_refresh(self, bank):
+        return self.stat_safety_refresh[bank]
+
+    def get_stat_flips(self, bank):
+        return self.memory.get_stat_flips(bank)
