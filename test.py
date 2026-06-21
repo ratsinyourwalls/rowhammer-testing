@@ -1,11 +1,12 @@
-from controller import MemoryController
-from protector_template import Protector
-from gui import MemoryGUI
 import random
 import time
 
+from controller import MemoryController
+from protector_template import Protector
+from gui import MemoryGUI
+
 BANKSIZE = 64
-controller = MemoryController(banks = 4, banksize=BANKSIZE, refreshcycle=1000)
+controller = MemoryController(banks=4, banksize=BANKSIZE, refreshcycle=1000)
 protector = Protector(controller)
 controller.register_protector(protector)
 gui = MemoryGUI(controller)
@@ -34,6 +35,7 @@ def normal_access(controller):
     normal_access.current_row = row
     controller.read(bank, row)
 
+
 # initial region
 normal_access.region_start = 0
 normal_access.region_size = 100
@@ -42,8 +44,9 @@ normal_access.current_row = 0
 
 def random_access(controller):
     bank = 1
-    row = random.randint(0, controller.get_banksize()-1)
+    row = random.randint(0, controller.get_banksize() - 1)
     controller.read(bank, row)
+
 
 def discovery_access(controller):
     bank = 1
@@ -55,6 +58,7 @@ def discovery_access(controller):
         discovery_access.counter = 0
         discovery_access.current_row = (row + 1) % controller.get_banksize()
 
+
 discovery_access.current_row = 0
 discovery_access.counter = 0
 
@@ -62,16 +66,17 @@ discovery_access.counter = 0
 def attack_access(controller):
     bank = 1
     row = attack_access.target_row
-    if(attack_access.hammered_time >= 1000):
+    if attack_access.hammered_time >= 1000:
         attack_access.target_row = random.randint(0, controller.get_banksize())
         attack_access.hammered_time = 0
-        if(attack_access.target_row % 2 == 1):
+        if attack_access.target_row % 2 == 1:
             attack_access.target_row -= 1
     controller.read(bank, row - 1)
     controller.read(bank, row + 1)
     attack_access.hammered_time += 1
 
-attack_access.target_row = 50 # example
+
+attack_access.target_row = 50  # example
 attack_access.hammered_time = 0
 
 
@@ -91,6 +96,7 @@ def main():
         elif mode == "attack":
             attack_access(controller)
         gui.draw()
+
 
 if __name__ == "__main__":
     main()

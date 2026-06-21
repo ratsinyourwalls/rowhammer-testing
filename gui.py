@@ -1,5 +1,4 @@
 import tkinter as tk
-import random
 
 
 class MemoryGUI:
@@ -15,7 +14,7 @@ class MemoryGUI:
             [False for _ in range(controller.get_banksize())]
             for _ in range(controller.get_banks())
         ]
-        
+
         self.row_flash = [
             [0 for _ in range(controller.get_banksize())]
             for _ in range(controller.get_banks())
@@ -24,7 +23,7 @@ class MemoryGUI:
         self.root = tk.Tk()
         self.root.title("DRAM RowHammer Simulator")
 
-        width = controller.get_banks() * (cell_size* + 4)
+        width = controller.get_banks() * (cell_size * +4)
         height = controller.get_banksize() * (cell_size + 4)
 
         self.canvas = tk.Canvas(self.root, width=width, height=height, bg="black")
@@ -32,7 +31,9 @@ class MemoryGUI:
         self.root.protocol("WM_DELETE_WINDOW", self.close)
 
         tk.Button(self.root, text="Next mode", command=self.next_mode).pack()
-        tk.Button(self.root, text="Reset flips", command=self.controller.memory.reset()).pack()
+        tk.Button(
+            self.root, text="Reset flips", command=self.controller.memory.reset()
+        ).pack()
         self.mode_label = tk.Label(self.root, text="Mode: normal", font=("Arial", 14))
         self.mode_label.pack()
 
@@ -65,7 +66,6 @@ class MemoryGUI:
 
         return f"#{r:02x}{g:02x}{b:02x}"
 
-
     def draw(self):
         self.canvas.delete("all")
 
@@ -76,9 +76,9 @@ class MemoryGUI:
         left_margin = 20
         top_margin = 20
 
-        banks= self.controller.get_banks()
+        banks = self.controller.get_banks()
         rows = self.controller.get_banksize()
-        
+
         # height of one bank block
         bank_block_height = rows * (row_height + row_spacing)
 
@@ -87,8 +87,7 @@ class MemoryGUI:
         total_height = bank_block_height + top_margin + 2
 
         # Resize canvas dynamically
-        self.canvas.config(width=total_width,
-                           height=total_height)
+        self.canvas.config(width=total_width, height=total_height)
 
         for bank in range(banks):
             # Vertical offset for this bank
@@ -96,10 +95,11 @@ class MemoryGUI:
 
             # Label the bank
             self.canvas.create_text(
-                bank_offset_x, top_margin - 10,
+                bank_offset_x,
+                top_margin - 10,
                 text=f"Bank {bank}",
                 fill="white",
-                anchor="w"
+                anchor="w",
             )
 
             for row in range(rows):
@@ -112,22 +112,17 @@ class MemoryGUI:
 
                 if flipped:
                     color = "red"
-                
+
                 elif flash:
                     color = "white"
                     self.row_flash[bank][row] -= 1
-                
+
                 else:
                     activ = self.controller.memory.get_ac(bank, row)
                     color = self.activation_to_color(activ)
 
-
                 self.canvas.create_rectangle(
-                    x, y,
-                    x + row_width, y + row_height,
-                    fill=color,
-                    outline=""
+                    x, y, x + row_width, y + row_height, fill=color, outline=""
                 )
 
         self.root.update()
-

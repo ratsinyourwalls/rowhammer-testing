@@ -4,6 +4,8 @@ import random
 This doesn't store the values, it only keeps track of certain events
 The events are access, probability of flip, and wether a row has had a flip.
 """
+
+
 class Memory:
     # A memory has banks, independent banks, and banksize rows whithin each one
     def __init__(self, nbanks, banksize):
@@ -26,14 +28,18 @@ class Memory:
     # number of rows in a bank
     def get_banksize(self):
         return self.banksize
-    
+
     # return access counter
     def get_ac(self, bank, row):
         # excluding out of bounds
-        if bank < 0 or bank >= self.get_banks() or row < 0 or row >= self.get_banksize():
+        if (
+            bank < 0
+            or bank >= self.get_banks()
+            or row < 0
+            or row >= self.get_banksize()
+        ):
             return 0
         return self.accesses[bank][row]
-
 
     def register_gui(self, gui):
         self.gui = gui
@@ -45,14 +51,13 @@ class Memory:
         self.accesses[bank] = [0] * self.get_banksize()
         self.probs[bank] = [0] * self.get_banksize()
         # flips shouldn't get erased on refresh
-        #self.flipped[bank] =[False] * self.get_banksize()
-    
+        # self.flipped[bank] =[False] * self.get_banksize()
+
     # doesn't work yet
     def reset(self):
         print("FLIP RESET")
         for bank in range(self.get_banks()):
             self.flipped[bank] = [False] * self.get_banksize()
-
 
     # read doesn't actually read the value, it counts one access to the row
     def read(self, bank, row):
@@ -62,18 +67,23 @@ class Memory:
         self.accesses[bank][row] += 1
         self.probs[bank][row] = 0
         self.update_neighbours(bank, row)
-    
 
     def update_neighbours(self, bank, row):
-        weights = [0.2,0.05,0.001]
+        weights = [0.2, 0.05, 0.001]
         for dist, w in enumerate(weights):
-            self.update_probability(bank, row+(dist+1), w)
-            self.update_probability(bank, row-(dist+1), w)
-            
+            self.update_probability(bank, row + (dist + 1), w)
+            self.update_probability(bank, row - (dist + 1), w)
+
     def update_probability(self, bank, row, weight):
-        if bank < 0 or bank >= self.get_banks() or row < 0 or row >= self.get_banksize():
+        if (
+            bank < 0
+            or bank >= self.get_banks()
+            or row < 0
+            or row >= self.get_banksize()
+        ):
             return
-        if self.flipped[bank][row]: return
+        if self.flipped[bank][row]:
+            return
         self.probs[bank][row] += weight
         p = self.flip_probability(bank, row)
         if p > random.random():
@@ -93,5 +103,4 @@ class Memory:
         if w < THRESHOLD:
             return 0
         else:
-            return min((w-THRESHOLD)/ MAXW, 1.0)
-
+            return min((w - THRESHOLD) / MAXW, 1.0)
