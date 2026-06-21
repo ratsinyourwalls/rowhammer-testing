@@ -40,9 +40,8 @@ class MemoryController:
 
     def safety_refresh(self, bank, row):
         self.stat_safety_refresh[bank] += 1
-
         self.memory.read(bank, row)
-        gui.notify_refresh(bank, row)
+        self.gui.notify_refresh(bank, row)
 
     # As the MemoryController has no conception of time, we will need to call
     # skip to simulate cycles where it doesn't write
@@ -56,8 +55,6 @@ class MemoryController:
         self.stat_refresh[bank] += 1
         if self.protector:
             self.protector.notify_refresh(bank)
-        if self.gui:
-            self.gui.notify_refresh(bank)
 
         self.readcounts[bank] = 0
         self.memory.refresh(bank)

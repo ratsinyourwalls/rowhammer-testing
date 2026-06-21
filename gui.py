@@ -130,7 +130,7 @@ class MemoryGUI:
                 if key in self.refresh_flashes:
                     elapsed = time.time() - self.refresh_flashes[key]
                     if elapsed < FLASH_DURATION:
-                        color = "green"
+                        color = "#66FF66"
                     else:
                         del self.refresh_flashes[key] #remove expired flash
                         color = None

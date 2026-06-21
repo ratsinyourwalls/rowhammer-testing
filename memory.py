@@ -66,7 +66,7 @@ class Memory:
     # read doesn't actually read the value, it counts one access to the row
     def read(self, bank, row):
         if bank < 0 or bank >= self.banks or row < 0 or row >= self.banksize:
-            print("Out of bounds:", bank, row)
+            #print("Out of bounds:", bank, row)
             return
         self.accesses[bank][row] += 1
         self.probs[bank][row] = 0
