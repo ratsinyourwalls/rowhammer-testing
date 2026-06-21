@@ -12,8 +12,8 @@ class Protector:
         if random.random() < self.ref_p:
             print("PARA: Random refresh")
             for d in range(self.ref_dist):
-                self.controller.read(bank, row + (d + 1))
-                self.controller.read(bank, row - (d + 1))
+                self.controller.refresh_row(bank, row + (d + 1))
+                self.controller.refresh_row(bank, row - (d + 1))
 
     # Refresh event
     def notify_refresh(self, bank):

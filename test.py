@@ -2,7 +2,7 @@ import random
 import time
 
 from controller import MemoryController
-from para_protector import Protector
+from graphene_protector import Protector
 from gui import MemoryGUI
 
 BANKSIZE = 64

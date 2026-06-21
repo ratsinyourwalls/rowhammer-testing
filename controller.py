@@ -32,6 +32,9 @@ class MemoryController:
         if self.readcounts[bank] >= self.refreshcycle:
             self.refresh(bank)
 
+    def refresh_row(self, bank, row):
+        self.memory.read(bank, row)
+
     # As the MemoryController has no conception of time, we will need to call
     # skip to simulate cycles where it doesn't write
     def skip(self, bank):
