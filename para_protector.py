@@ -4,7 +4,7 @@ import random
 class Protector:
     def __init__(self, controller):
         self.controller = controller
-        self.ref_p = 0.05
+        self.ref_p = 0.001
         self.ref_dist = 1
 
     # Write event
