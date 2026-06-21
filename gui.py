@@ -24,22 +24,40 @@ class MemoryGUI:
             for _ in range(controller.get_banks())
         ]
 
+        # the window
         self.root = tk.Tk()
         self.root.title("DRAM RowHammer Simulator")
-
+        # standard size (actually adjusts to content)
         width = controller.get_banks() * (cell_size * +4)
         height = controller.get_banksize() * (cell_size + 4)
-
+        # this contains the bank representation
         self.canvas = tk.Canvas(self.root, width=width, height=height, bg="black")
         self.canvas.pack()
         self.root.protocol("WM_DELETE_WINDOW", self.close)
-
-        tk.Button(self.root, text="Next mode", command=self.next_mode).pack()
+        # put the buttons side by side
+        button_frame = tk.Frame(self.root)
+        button_frame.pack(pady=5)
+        tk.Button(button_frame, text="Next mode", command=self.next_mode).pack(side="left", padx=5)
         tk.Button(
-            self.root, text="Reset flips", command=self.reset
-        ).pack()
-        self.mode_label = tk.Label(self.root, text="Mode: normal", font=("Arial", 14))
+            button_frame, text="Reset flips", command=self.reset
+        ).pack(side="left", padx=5)
+        # slow motion
+        self.slow_motion = tk.BooleanVar(value=False)
+        tk.Checkbutton(self.root, text="Slow motion", variable=self.slow_motion).pack()
+
+        # --- Mode label (cleaner, with margin) ---
+        label_frame = tk.Frame(self.root)
+        label_frame.pack(pady=10)   # bottom margin
+
+        self.mode_label = tk.Label(
+            label_frame,
+            text="Mode: normal",
+            font=("Arial", 14, "bold"),
+            fg="#CCCCCC",            # softer light gray
+            bg="black"               # matches canvas background
+        )
         self.mode_label.pack()
+
 
     def next_mode(self):
         self.mode_index = (self.mode_index + 1) % len(self.MODES)
