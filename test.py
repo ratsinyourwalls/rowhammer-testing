@@ -9,7 +9,8 @@ from graphene_protector import GrapheneProtector
 from gui import MemoryGUI
 
 BANKSIZE = 64
-controller = MemoryController(banks=4, banksize=BANKSIZE, refreshcycle=1000)
+REFRESHCYCLE = 1000
+controller = MemoryController(banks=4, banksize=BANKSIZE, refreshcycle=REFRESHCYCLE)
 protector = None
 # controller.register_protector(protector)
 gui = MemoryGUI(controller)
@@ -65,16 +66,18 @@ discovery_access.current_row = 0
 discovery_access.counter = 0
 
 
-def attack_access(controller):
+def attack_access(controller, d=1):
     bank = 1
     row = attack_access.target_row
-    if attack_access.hammered_time >= 1000:
+    if attack_access.hammered_time >= REFRESHCYCLE:
         attack_access.target_row = random.randint(0, controller.get_banksize())
         attack_access.hammered_time = 0
         if attack_access.target_row % 2 == 1:
             attack_access.target_row -= 1
-    controller.read(bank, row - 1)
-    controller.read(bank, row + 1)
+
+    for i in range(1, (d + 1)):
+        controller.read(bank, row - (i))
+        controller.read(bank, row + (i))
     attack_access.hammered_time += 1
 
 
@@ -127,7 +130,7 @@ def main():
         elif mode == "discover":
             discovery_access(controller)
         elif mode == "attack":
-            attack_access(controller)
+            attack_access(controller, 2)
         gui.draw()
         time.sleep(sleep_time)
 
