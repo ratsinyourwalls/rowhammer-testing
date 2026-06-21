@@ -47,7 +47,7 @@ class Memory:
     # just puts all bits back to 0
     # this represents resetting the activation counter
     def refresh(self, bank):
-        print("MEMORY REFRESH")
+        #print("MEMORY REFRESH")
         self.accesses[bank] = [0] * self.get_banksize()
         self.probs[bank] = [0] * self.get_banksize()
         # flips shouldn't get erased on refresh
@@ -58,6 +58,7 @@ class Memory:
         print("FLIP RESET")
         for bank in range(self.get_banks()):
             self.flipped[bank] = [False] * self.get_banksize()
+            self.refresh(bank)
 
     # read doesn't actually read the value, it counts one access to the row
     def read(self, bank, row):

@@ -34,7 +34,7 @@ class MemoryGUI:
 
         tk.Button(self.root, text="Next mode", command=self.next_mode).pack()
         tk.Button(
-            self.root, text="Reset flips", command=self.reset()
+            self.root, text="Reset flips", command=self.reset
         ).pack()
         self.mode_label = tk.Label(self.root, text="Mode: normal", font=("Arial", 14))
         self.mode_label.pack()
@@ -53,8 +53,11 @@ class MemoryGUI:
         self.row_flipped[bank][row] = True
 
     def reset(self):
-        for bank in range(self.controller.get_banks()):
-            self.row_flipped[bank] = [False] * self.controller.get_banksize()
+        self.controller.memory.reset()
+        self.row_flipped = [
+            [False for _ in range(self.controller.get_banksize())]
+            for _ in range(self.controller.get_banks())
+        ]
 
     def notify_refresh(self, bank):
         pass
@@ -76,7 +79,7 @@ class MemoryGUI:
         if time.time_ns() - self._lastcall >= 1600000 * 2:
             self._lastcall = time.time_ns()
         else:
-            print("Skipping frame")
+            #print("Skipping frame")
             return
 
         self.canvas.delete("all")
@@ -124,10 +127,6 @@ class MemoryGUI:
 
                 if flipped:
                     color = "red"
-
-                elif flash:
-                    color = "white"
-                    self.row_flash[bank][row] -= 1
 
                 else:
                     activ = self.controller.memory.get_ac(bank, row)
