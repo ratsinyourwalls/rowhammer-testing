@@ -119,8 +119,6 @@ def main():
     print("Use the GUI to switch modes")
     while gui.running:
         mode = gui.mode
-        print("slow motion:", gui.slow_motion)
-        time.sleep(1)
         sleep_time = gui.sleep_time
         if mode == "normal":
             normal_access(controller)
@@ -131,8 +129,7 @@ def main():
         elif mode == "attack":
             attack_access(controller, 2)
         gui.draw()
-        if not gui.slow_motion:
-            time.sleep(sleep_time)
+        time.sleep(sleep_time)
 
 
 if __name__ == "__main__":
