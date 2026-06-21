@@ -17,10 +17,8 @@ class Protector:
     # Write event
     def notify_read(self, bank, row):
         self.misra[bank].add(row)
-        if self.misra[bank].get(row) > self.treshold:
+        if self.check_treshold(self.misra[bank].get(row)):
             print(f"GRAPHENE: Triggered refresh from {bank}:{row}")
-            self.misra[bank].remove(row)
-
             for d in range(self.ref_dist):
                 self.controller.refresh_row(bank, row + (d + 1))
                 self.controller.refresh_row(bank, row - (d + 1))
@@ -28,6 +26,15 @@ class Protector:
     # Refresh event
     def notify_refresh(self, bank):
         self.misra[bank] = MisraGries(self.table_size)
+
+    def check_treshold(self, t):
+        i = 1
+        while t > self.treshold * i:
+            i += 1
+        if t == self.treshold * i:
+            return True
+        else:
+            return False
 
 
 class MisraGries:
