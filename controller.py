@@ -13,11 +13,12 @@ class MemoryController:
         self.readcounts = [0] * banks
         self.protector = None
         self.gui = None
-
+        
+        # useful for statistics
         self.stat_reads = [0] * banks
         self.stat_safety_refresh = [0] * banks
         self.stat_refresh = [0] * banks
-        self.stat_flips = [0] * banks
+        #self.stat_flips = [0] * banks
 
     def register_protector(self, protector):
         self.protector = protector
