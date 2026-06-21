@@ -33,9 +33,7 @@ class MemoryGUI:
         self.root.protocol("WM_DELETE_WINDOW", self.close)
 
         tk.Button(self.root, text="Next mode", command=self.next_mode).pack()
-        tk.Button(
-            self.root, text="Reset flips", command=self.reset()
-        ).pack()
+        tk.Button(self.root, text="Reset flips", command=self.reset()).pack()
         self.mode_label = tk.Label(self.root, text="Mode: normal", font=("Arial", 14))
         self.mode_label.pack()
 
@@ -73,10 +71,10 @@ class MemoryGUI:
         return f"#{r:02x}{g:02x}{b:02x}"
 
     def draw(self):
-        if time.time_ns() - self._lastcall >= 1600000 * 2:
-            self._lastcall = time.time_ns()
+        t = time.time_ns()
+        if t - self._lastcall >= 1.6e7:
+            self._lastcall = t
         else:
-            print("Skipping frame")
             return
 
         self.canvas.delete("all")
