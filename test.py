@@ -119,7 +119,7 @@ def main():
     print("Use the GUI to switch modes")
     while gui.running:
         mode = gui.mode
-        loopn = 0
+        sleep_time = gui.sleep_time
         if mode == "normal":
             normal_access(controller)
         elif mode == "random":
@@ -129,6 +129,7 @@ def main():
         elif mode == "attack":
             attack_access(controller)
         gui.draw()
+        time.sleep(sleep_time)
 
 
 if __name__ == "__main__":
