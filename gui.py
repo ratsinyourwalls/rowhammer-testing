@@ -3,6 +3,7 @@ import tkinter as tk
 
 FLASH_DURATION = 0.2
 
+
 class MemoryGUI:
     def __init__(self, controller, cell_size=20):
         self.controller = controller
@@ -13,6 +14,7 @@ class MemoryGUI:
         self.mode = self.MODES[self.mode_index]
         self._lastcall = 0
         self.refresh_flashes = {}
+        self.sleep_time = 0.005
 
         self.row_flipped = [
             [False for _ in range(controller.get_banksize())]
@@ -35,9 +37,7 @@ class MemoryGUI:
         self.root.protocol("WM_DELETE_WINDOW", self.close)
 
         tk.Button(self.root, text="Next mode", command=self.next_mode).pack()
-        tk.Button(
-            self.root, text="Reset flips", command=self.reset
-        ).pack()
+        tk.Button(self.root, text="Reset flips", command=self.reset).pack()
         self.mode_label = tk.Label(self.root, text="Mode: normal", font=("Arial", 14))
         self.mode_label.pack()
 
@@ -63,7 +63,7 @@ class MemoryGUI:
 
     def notify_read(self, bank, row):
         self.row_flash[bank][row] = 3
-    
+
     def notify_refresh(self, bank, row):
         self.refresh_flashes[(bank, row)] = time.time()
 
@@ -132,7 +132,7 @@ class MemoryGUI:
                     if elapsed < FLASH_DURATION:
                         color = "#66FF66"
                     else:
-                        del self.refresh_flashes[key] #remove expired flash
+                        del self.refresh_flashes[key]  # remove expired flash
                         color = None
                 else:
                     color = None
