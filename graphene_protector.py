@@ -4,10 +4,16 @@ import math
 class Protector:
     def __init__(self, controller):
         self.controller = controller
+
+        # After how many accesses should we refresh?
         self.treshold = 50
-        # table_size > (refreshcycle / treshold) - 1
-        self.table_size = math.ceil(controller.refreshcycle / self.treshold) + 1
+        # On refresh triggeered, distance of neighbours to refresh
         self.ref_dist = 1
+
+        # table_size > (refreshcycle / treshold) - 1
+        # size of the misra table for each bank
+        # Formula given by the paper
+        self.table_size = math.ceil(controller.refreshcycle / self.treshold) + 1
 
         banks = controller.get_banks()
         self.misra = []
@@ -17,41 +23,52 @@ class Protector:
     # Write event
     def notify_read(self, bank, row):
         self.misra[bank].add(row)
-        if self.check_treshold(self.misra[bank].get(row)):
+        t = self.misra[bank].get(row)
+
+        # We refresh if the count is a multiple of treshold
+        if t > 0 and (t % self.treshold == 0):
             print(f"GRAPHENE: Triggered refresh from {bank}:{row}")
+
+            # Refresh rows at increasing distance
             for d in range(self.ref_dist):
                 self.controller.refresh_row(bank, row + (d + 1))
                 self.controller.refresh_row(bank, row - (d + 1))
 
     # Refresh event
     def notify_refresh(self, bank):
+        # Just reset the misra count of the bank with a blank one
         self.misra[bank] = MisraGries(self.table_size)
 
-    def check_treshold(self, t):
-        i = 1
-        while t > self.treshold * i:
-            i += 1
-        if t == self.treshold * i:
-            return True
-        else:
-            return False
 
-
+# Implements the Misra Gries algorithm from the paper
 class MisraGries:
     def __init__(self, size):
+        # Maximum number of keys in the table
         self.size = size
+
+        # The table is a dict of keys and their approximate count
         self.table = {}
+
+        # The spillover is a count of all the elements that don't go
+        # in the table, because the keys are missing.
         self.spillover = 0
 
+    # Encountered element "key", add it to the frequency table
     def add(self, key):
+        # If already present in the table, just add one to the freq
         if key in self.table:
             self.table[key] += 1
+        # If the table isn't full, add it to the table
         elif len(self.table) < self.size:
             self.table[key] = self.spillover + 1
+        # Not found and no space
         else:
+            # If we find an element whith count = spillover we replace it,
+            # otherwise increase spillover
             found = False
             for k, c in self.table.items():
                 if c == self.spillover:
+                    # Found the element to replace
                     self.table.pop(k)
                     self.table[key] = self.spillover + 1
                     found = True
@@ -59,12 +76,9 @@ class MisraGries:
             if not found:
                 self.spillover += 1
 
+    # Get an approximate count
     def get(self, key):
         if key in self.table:
             return self.table[key]
         else:
             return 0
-
-    def remove(self, key):
-        if key in self.table:
-            self.table.pop(key)
