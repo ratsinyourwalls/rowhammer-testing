@@ -1,8 +1,9 @@
 import random
 import time
+import sys
 
 from controller import MemoryController
-from graphene_protector import Protector
+from graphene_protector import Protector as Protector
 from gui import MemoryGUI
 
 BANKSIZE = 64
@@ -80,10 +81,21 @@ attack_access.target_row = 50  # example
 attack_access.hammered_time = 0
 
 
+help_message="Usage: test.py strategy\n
+strategy = none or para or graphene or blockhammer"
+
 # TODO generate write sequences and pass them to the controller
 # TODO generate some statistics
 def main():
-    print("Doing casual reads. Maximum expected: 1 flip")
+    if len(sys.argv) < 2:
+        print(help_message)
+    strategy = sys.argv[1]
+    match strategy:
+        case "none":
+        case "para":
+        case "graphene":
+        case "blockhammer":
+    print("Switch mode")
     while gui.running:
         mode = gui.mode
         loopn = 0
