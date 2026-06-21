@@ -30,31 +30,74 @@ class MemoryGUI:
         # the window
         self.root = tk.Tk()
         self.root.title("DRAM RowHammer Simulator")
+        self.root.configure(bg="black")
         # standard size (actually adjusts to content)
         width = controller.get_banks() * (cell_size * +4)
         height = controller.get_banksize() * (cell_size + 4)
         # this contains the bank representation
-        self.canvas = tk.Canvas(self.root, width=width, height=height, bg="black")
+        canvas_frame = tk.Frame(self.root, bg="black")
+        canvas_frame.pack(pady=10)
+
+        self.canvas = tk.Canvas(
+                canvas_frame, 
+                width=width, 
+                height=height, 
+                bg="black",
+                highlightthickness=0
+                )
         self.canvas.pack()
         self.root.protocol("WM_DELETE_WINDOW", self.close)
+
         # put the buttons side by side
-        button_frame = tk.Frame(self.root)
+        button_frame = tk.Frame(self.root, bg="black")
         button_frame.pack(pady=5)
-        tk.Button(button_frame, text="Next mode", command=self.next_mode).pack(
-            side="left", padx=5
-        )
-        tk.Button(button_frame, text="Reset flips", command=self.reset).pack(
-            side="left", padx=5
-        )
+        
+        tk.Button(
+                button_frame, 
+                text="Next mode", 
+                command=self.next_mode,
+                bg="#222222",
+                fg="white",
+                activebackground="#444444",
+                activeforeground="white"
+            ).pack(side="left", padx=5)
+        
+        tk.Button(
+            button_frame,
+            text="Reset flips",
+            command=self.reset,
+            bg="#222222",
+            fg="white",
+            activebackground="#444444",
+            activeforeground="white"
+        ).pack(side="left", padx=5)
+        
+        tk.Button(
+            button_frame,
+            text="Do nothing",
+            #command=self.reset,
+            bg="#222222",
+            fg="white",
+            activebackground="#444444",
+            activeforeground="white"
+        ).pack(side="left", padx=5)
+
         # slow motion
         CB = tk.Checkbutton(
-            self.root, text="Slow motion", command=self.toggle_slow_motion
+            self.root, 
+            text="Slow motion", 
+            command=self.toggle_slow_motion,
+            bg="black",
+            fg="white",
+            selectcolor="black",
+            activebackground="black",
+            activeforeground="white"
         )
         CB.select()
-        CB.pack()
+        CB.pack(pady=5)
 
         # --- Mode label (cleaner, with margin) ---
-        label_frame = tk.Frame(self.root)
+        label_frame = tk.Frame(self.root, bg="black")
         label_frame.pack(pady=10)  # bottom margin
 
         self.mode_label = tk.Label(
@@ -64,6 +107,24 @@ class MemoryGUI:
             fg="#CCCCCC",  # softer light gray
             bg="black",  # matches canvas background
         )
+        self.mode_label.pack()
+
+
+        # ---- Stats panel ----
+        self.stats_frame = tk.Frame(self.root, bg="black", bd=2, relief="ridge")
+        self.stats_frame.pack(pady=10, fill="x")
+
+        self.stats_label = tk.Label(
+            self.stats_frame,
+            text="Reads: 0   Refreshes: 0   Flips: 0",
+            font=("Consolas", 12),
+            fg="#00FF00",
+            bg="black",
+            anchor="w",
+            padx=10,
+            pady=5
+        )
+        self.stats_label.pack(fill="x")
 
     def next_mode(self):
         self.mode_index = (self.mode_index + 1) % len(self.MODES)
@@ -107,6 +168,18 @@ class MemoryGUI:
             self.sleep_time = 0.005
         else:
             self.sleep_time = 0
+
+    def update_stats(self):
+        reads = refreshes =  safety_refreshes = flips = 0
+        for bank in range(0, self.controller.get_banks()):
+            reads += self.controller.get_stat_reads(bank)
+            refreshes += self.controller.get_stat_refresh(bank)
+            safety_refreshes += self.controller.get_stat_safety_refresh(bank)
+            flips += self.controller.get_stat_flips(bank)
+
+        self.stats_label.config(
+            text=f"Reads: {reads}   Refreshes:   {refreshes}   Flips: {flips}   Safety Refreshes: {safety_refreshes}"
+        )
 
     def draw(self):
         t = time.time_ns()
@@ -178,5 +251,6 @@ class MemoryGUI:
                 self.canvas.create_rectangle(
                     x, y, x + row_width, y + row_height, fill=color, outline=""
                 )
-
+        
+        self.update_stats()
         self.root.update()
