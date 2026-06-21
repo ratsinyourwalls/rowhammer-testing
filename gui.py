@@ -1,6 +1,7 @@
 import time
 import tkinter as tk
 
+FLASH_DURATION = 0.2
 
 class MemoryGUI:
     def __init__(self, controller, cell_size=20):
@@ -11,6 +12,7 @@ class MemoryGUI:
         self.MODES = ["normal", "random", "discover", "attack"]
         self.mode = self.MODES[self.mode_index]
         self._lastcall = 0
+        self.refresh_flashes = {}
 
         self.row_flipped = [
             [False for _ in range(controller.get_banksize())]
@@ -63,7 +65,7 @@ class MemoryGUI:
         self.row_flash[bank][row] = 3
     
     def notify_refresh(self, bank, row):
-        pass
+        self.refresh_flashes[(bank, row)] = time.time()
 
     def activation_to_color(self, activ):
         max_activ = 100
@@ -123,14 +125,24 @@ class MemoryGUI:
 
                 # Color logic
                 flipped = self.row_flipped[bank][row]
-                flash = self.row_flash[bank][row]
-
-                if flipped:
-                    color = "red"
-
+                # check refresh
+                key = (bank, row)
+                if key in self.refresh_flashes:
+                    elapsed = time.time() - self.refresh_flashes[key]
+                    if elapsed < FLASH_DURATION:
+                        color = "green"
+                    else:
+                        del self.refresh_flashes[key] #remove expired flash
+                        color = None
                 else:
-                    activ = self.controller.memory.get_ac(bank, row)
-                    color = self.activation_to_color(activ)
+                    color = None
+
+                if color is None:
+                    if flipped:
+                        color = "red"
+                    else:
+                        activ = self.controller.memory.get_ac(bank, row)
+                        color = self.activation_to_color(activ)
 
                 self.canvas.create_rectangle(
                     x, y, x + row_width, y + row_height, fill=color, outline=""
