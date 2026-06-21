@@ -36,7 +36,6 @@ class MemoryGUI:
         self.canvas = tk.Canvas(self.root, width=width, height=height, bg="black")
         self.canvas.pack()
         self.root.protocol("WM_DELETE_WINDOW", self.close)
-<<<<<<< HEAD
         # put the buttons side by side
         button_frame = tk.Frame(self.root)
         button_frame.pack(pady=5)
@@ -45,7 +44,6 @@ class MemoryGUI:
             button_frame, text="Reset flips", command=self.reset
         ).pack(side="left", padx=5)
         # slow motion
-        self.slow_motion = tk.BooleanVar(value=False)
         tk.Checkbutton(self.root, text="Slow motion", variable=self.slow_motion).pack()
 
         # --- Mode label (cleaner, with margin) ---
