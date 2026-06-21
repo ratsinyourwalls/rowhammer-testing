@@ -5,9 +5,9 @@ class Protector:
         self.controller = controller
 
     # Write event
-    def notifywrite(self, bank, row):
+    def notifyread(self, bank, row):
         pass
 
     # Refresh event
-    def notifyrefresh(self):
+    def notify_refresh(self, bank):
         pass

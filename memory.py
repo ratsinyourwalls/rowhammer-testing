@@ -1,45 +1,96 @@
+import random
+
+"""
+This doesn't store the values, it only keeps track of certain events
+The events are access, probability of flip, and wether a row has had a flip.
+"""
 class Memory:
     # A memory has banks, independent banks, and banksize rows whithin each one
-    def __init__(self, banks, banksize):
+    def __init__(self, nbanks, banksize):
         # blank memory
-        self.banks = [[]] * banks
-        for i in range(banks):
-            self.banks[i] = [0] * banksize
+        # number of banks and size
+        self.banks = nbanks
+        self.banksize = banksize
+        # number of accesses to a certain cell
+        self.accesses = [[0] * banksize for _ in range(nbanks)]
+        # probability of flip
+        self.probs = [[0] * banksize for _ in range(nbanks)]
+        # whether a row has had a flip.
+        self.flipped = [[False] * banksize for _ in range(nbanks)]
+        self.gui = None
 
+    # return number of banks
     def get_banks(self):
-        return len(self.banks)
+        return self.banks
 
+    # number of rows in a bank
     def get_banksize(self):
-        return len(self.banks[0])
-
-    def read(self, bank, row):
+        return self.banksize
+    
+    # return access counter
+    def get_ac(self, bank, row):
         # excluding out of bounds
-        if bank < 0 or bank > self.get_banks() or row < 0 or row > self.get_banksize():
+        if bank < 0 or bank >= self.get_banks() or row < 0 or row >= self.get_banksize():
             return 0
-        return self.banks[bank][row]
+        return self.accesses[bank][row]
+
+
+    def register_gui(self, gui):
+        self.gui = gui
 
     # just puts all bits back to 0
-    # TODO is this the same thing as memory refresh, for simulation purposes?
-    # Let's consider if the refresh does something else then just resetting to previous values
-    # or does something eletrical that affects our security measures.
+    # this represents resetting the activation counter
     def refresh(self, bank):
-        self.banks[bank] = [0] * self.get_banksize()
+        print("MEMORY REFRESH")
+        self.accesses[bank] = [0] * self.get_banksize()
+        self.probs[bank] = [0] * self.get_banksize()
+        # flips shouldn't get erased on refresh
+        #self.flipped[bank] =[False] * self.get_banksize()
 
-    # what does this do?
-    def write(self, bank, row):
-        self.banks[bank][row] += 1
+    def reset(self):
+        print("FLIP RESET")
+        for bank in range(self.get_banks()):
+            self.flipped[bank] = [False] * self.get_banksize()
+
+
+    # read doesn't actually read the value, it counts one access to the row
+    def read(self, bank, row):
+        if bank < 0 or bank >= self.banks or row < 0 or row >= self.banksize:
+            print("Out of bounds:", bank, row)
+            return
+        self.accesses[bank][row] += 1
+        self.probs[bank][row] = 0
+        self.update_neighbours(bank, row)
+    
+
+    def update_neighbours(self, bank, row):
+        weights = [0.2,0.05,0.005]
+        for dist, w in enumerate(weights):
+            self.update_probability(bank, row+(dist+1), w)
+            self.update_probability(bank, row-(dist+1), w)
+            
+    def update_probability(self, bank, row, weight):
+        if bank < 0 or bank >= self.get_banks() or row < 0 or row >= self.get_banksize():
+            return
+        if self.flipped[bank][row]: return
+        self.probs[bank][row] += weight
+        p = self.flip_probability(bank, row)
+        if p > random.random():
+            print("FLIP at", bank, row)
+            print("Probability:", p, "row accesses:", self.accesses[bank][row])
+            self.gui.notify_flip(bank, row)
+            self.flipped[bank][row] = True
 
     def flip_probability(self, bank, row):
-        # TODO change the probabilities to something reasonable (and not
-        # hardcoded)
-        # TODO look up the flip probabilities from the DDR4 studies
-        # are those the probabilities for adiacent, distance 2, distance 3?
-        probabilities = [0.1, 0.01, 0.001]
-        
-        # i don't understand this
-        s = 0
-        for i, p in enumerate(probabilities):
-            s += p * self.read(bank, row + (i + 1))
-            s += p * self.read(bank, row - (i + 1))
+        if row % 2 == 1:
+            return 0
 
-        return s
+        THRESHOLD = 50
+        MAXW = 100
+
+        w = self.probs[bank][row]
+        if w < THRESHOLD:
+            return 0
+        else:
+            return min((w-THRESHOLD)/ MAXW, 1.0)
+
