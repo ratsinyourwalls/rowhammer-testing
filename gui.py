@@ -34,7 +34,7 @@ class MemoryGUI:
 
         tk.Button(self.root, text="Next mode", command=self.next_mode).pack()
         tk.Button(
-            self.root, text="Reset flips", command=self.controller.memory.reset()
+            self.root, text="Reset flips", command=self.reset()
         ).pack()
         self.mode_label = tk.Label(self.root, text="Mode: normal", font=("Arial", 14))
         self.mode_label.pack()
@@ -51,6 +51,10 @@ class MemoryGUI:
 
     def notify_flip(self, bank, row):
         self.row_flipped[bank][row] = True
+
+    def reset(self):
+        for bank in range(self.controller.get_banks()):
+            self.row_flipped[bank] = [False] * self.controller.get_banksize()
 
     def notify_refresh(self, bank):
         pass
