@@ -51,7 +51,7 @@ def discovery_access(controller):
     controller.read(bank, row)
 
     discovery_access.counter += 1
-    if discovery_access.counter >= 200:
+    if discovery_access.counter >= 300:
         discovery_access.counter = 0
         discovery_access.current_row = (row + 1) % controller.get_banksize()
 
@@ -62,10 +62,17 @@ discovery_access.counter = 0
 def attack_access(controller):
     bank = 1
     row = attack_access.target_row
+    if(attack_access.hammered_time >= 1000):
+        attack_access.target_row = random.randint(0, controller.get_banksize())
+        attack_access.hammered_time = 0
+        if(attack_access.target_row % 2 == 1):
+            attack_access.target_row -= 1
     controller.read(bank, row - 1)
     controller.read(bank, row + 1)
+    attack_access.hammered_time += 1
 
 attack_access.target_row = 50 # example
+attack_access.hammered_time = 0
 
 
 # TODO generate write sequences and pass them to the controller

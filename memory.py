@@ -46,7 +46,8 @@ class Memory:
         self.probs[bank] = [0] * self.get_banksize()
         # flips shouldn't get erased on refresh
         #self.flipped[bank] =[False] * self.get_banksize()
-
+    
+    # doesn't work yet
     def reset(self):
         print("FLIP RESET")
         for bank in range(self.get_banks()):
@@ -64,7 +65,7 @@ class Memory:
     
 
     def update_neighbours(self, bank, row):
-        weights = [0.2,0.05,0.005]
+        weights = [0.2,0.05,0.001]
         for dist, w in enumerate(weights):
             self.update_probability(bank, row+(dist+1), w)
             self.update_probability(bank, row-(dist+1), w)
