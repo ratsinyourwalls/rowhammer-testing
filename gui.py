@@ -59,11 +59,11 @@ class MemoryGUI:
             for _ in range(self.controller.get_banks())
         ]
 
-    def notify_refresh(self, bank):
-        pass
-
     def notify_read(self, bank, row):
         self.row_flash[bank][row] = 3
+    
+    def notify_refresh(self, bank, row):
+        pass
 
     def activation_to_color(self, activ):
         max_activ = 100

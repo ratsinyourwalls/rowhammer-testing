@@ -34,6 +34,7 @@ class MemoryController:
 
     def refresh_row(self, bank, row):
         self.memory.read(bank, row)
+        gui.notify_refresh(bank, row)
 
     # As the MemoryController has no conception of time, we will need to call
     # skip to simulate cycles where it doesn't write
