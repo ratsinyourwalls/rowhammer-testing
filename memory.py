@@ -55,12 +55,11 @@ class Memory:
         # flips shouldn't get erased on refresh
         # self.flipped[bank] =[False] * self.get_banksize()
 
-    # doesn't work yet
     def reset(self):
         print("FLIP RESET")
         for bank in range(self.get_banks()):
             self.flipped[bank] = [False] * self.get_banksize()
-            self.stat_flips[bank] = 0
+            # self.stat_flips[bank] = 0
             self.refresh(bank)
 
     # read doesn't actually read the value, it counts one access to the row
@@ -113,3 +112,6 @@ class Memory:
 
     def get_stat_flips(self, bank):
         return self.stat_flips[bank]
+
+    def reset_stat_flips(self):
+        self.stat_flips = [0] * nbanks

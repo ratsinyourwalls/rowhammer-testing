@@ -53,14 +53,14 @@ class MemoryGUI:
         button_frame.pack(pady=5)
         
         tk.Button(
-                button_frame, 
-                text="Next mode", 
-                command=self.next_mode,
-                bg="#222222",
-                fg="white",
-                activebackground="#444444",
-                activeforeground="white"
-            ).pack(side="left", padx=5)
+            button_frame, 
+            text="Next mode", 
+            command=self.next_mode,
+            bg="#222222",
+            fg="white",
+            activebackground="#444444",
+            activeforeground="white"
+        ).pack(side="left", padx=5)
         
         tk.Button(
             button_frame,
@@ -74,8 +74,8 @@ class MemoryGUI:
         
         tk.Button(
             button_frame,
-            text="Do nothing",
-            #command=self.reset,
+            text="Reset statistics",
+            command=self.controller.reset_stats,
             bg="#222222",
             fg="white",
             activebackground="#444444",
@@ -130,6 +130,7 @@ class MemoryGUI:
         self.mode_index = (self.mode_index + 1) % len(self.MODES)
         self.mode = self.MODES[self.mode_index]
         self.mode_label.config(text=f"Mode: {self.mode}")
+        self.controller.reset_stats()
         print("Switched to mode:", self.mode)
 
     def close(self):
@@ -176,9 +177,11 @@ class MemoryGUI:
             refreshes += self.controller.get_stat_refresh(bank)
             safety_refreshes += self.controller.get_stat_safety_refresh(bank)
             flips += self.controller.get_stat_flips(bank)
+        
+        percentage = reads / (reads + safety_refreshes) * 100
 
         self.stats_label.config(
-            text=f"Reads: {reads}   Refreshes:   {refreshes}   Flips: {flips}   Safety Refreshes: {safety_refreshes}"
+                text=f"Reads: {reads}   Refreshes:   {refreshes}   Flips: {flips}   Safety Refreshes: {safety_refreshes}   Efficiency: {percentage:.3f}%"
         )
 
     def draw(self):
