@@ -12,7 +12,6 @@ BANKSIZE = 64
 REFRESHCYCLE = 1000
 controller = MemoryController(banks=4, banksize=BANKSIZE, refreshcycle=REFRESHCYCLE)
 protector = None
-# controller.register_protector(protector)
 gui = MemoryGUI(controller)
 controller.register_gui(gui)
 
@@ -27,7 +26,6 @@ def normal_access(controller):
             row = normal_access.region_start
 
     elif random.random() < 0.95:
-        # print("normal access jump to region start", normal_access.region_start)
         row = normal_access.region_start
     else:
         normal_access.region_size = 30
@@ -101,7 +99,6 @@ STRATEGY_MAP = {
 }
 
 
-# TODO generate write sequences and pass them to the controller
 # TODO generate some statistics
 def main():
     if len(sys.argv) < 2:
