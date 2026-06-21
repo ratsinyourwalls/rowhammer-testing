@@ -6,9 +6,6 @@ class MemoryGUI:
         self.controller = controller
         self.cell_size = cell_size
         self.running = True
-        self.mode_index = 0
-        self.MODES = ["normal", "random", "discover", "attack"]
-        self.mode = self.MODES[self.mode_index]
 
         self.row_flipped = [
             [False for _ in range(controller.get_banksize())]

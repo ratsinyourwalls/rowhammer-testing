@@ -1,6 +1,8 @@
 # Protector framework
-# TODO implement protector strategies
-class Protector:
+"""
+Does nothing
+"""
+class DefaultProtector:
     def __init__(self, controller):
         self.controller = controller
 

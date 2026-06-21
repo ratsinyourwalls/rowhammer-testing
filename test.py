@@ -3,16 +3,17 @@ import time
 import sys
 
 from controller import MemoryController
-from graphene_protector import Protector as Protector
+from protector_template import DefaultProtector
+from para_protector import ParaProtector
+from graphene_protector import GrapheneProtector
 from gui import MemoryGUI
 
 BANKSIZE = 64
 controller = MemoryController(banks=4, banksize=BANKSIZE, refreshcycle=1000)
-protector = Protector(controller)
-controller.register_protector(protector)
+protector = None
+#controller.register_protector(protector)
 gui = MemoryGUI(controller)
 controller.register_gui(gui)
-# MODES = ["normal", "random", "discover", "attack"]
 
 
 def normal_access(controller):
@@ -81,21 +82,42 @@ attack_access.target_row = 50  # example
 attack_access.hammered_time = 0
 
 
-help_message="Usage: test.py strategy\n
-strategy = none or para or graphene or blockhammer"
+HELP_MESSAGE="""Usage: test.py <strategy>
+
+Available strategies:
+none          - No protection
+  para          - PARA protection
+  graphene      - Graphene protection
+  blockhammer   - Blockhammer protection (Pending implementation)"""
+
+# Mapping strategies to their respective classes simplifies expansion
+STRATEGY_MAP = {
+    "none": DefaultProtector,
+    "para": ParaProtector,
+    "graphene": GrapheneProtector,
+    "blockhammer": DefaultProtector, # TODO: Change to BlockhammerProtector once implemented
+}
+
 
 # TODO generate write sequences and pass them to the controller
 # TODO generate some statistics
 def main():
     if len(sys.argv) < 2:
-        print(help_message)
-    strategy = sys.argv[1]
-    match strategy:
-        case "none":
-        case "para":
-        case "graphene":
-        case "blockhammer":
-    print("Switch mode")
+        print(HELP_MESSAGE)
+        sys.exit(1)
+
+    strategy = sys.argv[1].lower()
+
+    if strategy not in STRATEGY_MAP:
+        print("Unkown strategy: defaulting to None.")
+        strategy = "none"
+    
+    protector_class =STRATEGY_MAP[strategy]
+    protector = protector_class(controller)
+    
+    controller.register_protector(protector)
+    
+    print("Use the GUI to switch modes")
     while gui.running:
         mode = gui.mode
         loopn = 0

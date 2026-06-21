@@ -1,7 +1,7 @@
 import random
 
 
-class Protector:
+class ParaProtector:
     def __init__(self, controller):
         self.controller = controller
         # Random chance of refreshing neighbours on read

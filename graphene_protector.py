@@ -1,7 +1,7 @@
 import math
 
 
-class Protector:
+class GrapheneProtector:
     def __init__(self, controller):
         self.controller = controller
 

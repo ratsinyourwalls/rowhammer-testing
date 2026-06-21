@@ -2,7 +2,7 @@ import random
 
 """
 This doesn't store the values, it only keeps track of certain events
-The events are access, probability of flip, and wether a row has had a flip.
+The events are access, probability of flip, and whether a row has had a flip.
 """
 
 
