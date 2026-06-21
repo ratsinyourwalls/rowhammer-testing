@@ -15,6 +15,7 @@ class MemoryGUI:
         self._lastcall = 0
         self.refresh_flashes = {}
         self.sleep_time = 0.005
+        self.slow_motion = True
 
         self.row_flipped = [
             [False for _ in range(controller.get_banksize())]
@@ -39,25 +40,30 @@ class MemoryGUI:
         # put the buttons side by side
         button_frame = tk.Frame(self.root)
         button_frame.pack(pady=5)
-        tk.Button(button_frame, text="Next mode", command=self.next_mode).pack(side="left", padx=5)
-        tk.Button(
-            button_frame, text="Reset flips", command=self.reset
-        ).pack(side="left", padx=5)
+        tk.Button(button_frame, text="Next mode", command=self.next_mode).pack(
+            side="left", padx=5
+        )
+        tk.Button(button_frame, text="Reset flips", command=self.reset).pack(
+            side="left", padx=5
+        )
         # slow motion
-        tk.Checkbutton(self.root, text="Slow motion", variable=self.slow_motion).pack()
+        CB = tk.Checkbutton(
+            self.root, text="Slow motion", command=self.toggle_slow_motion
+        )
+        CB.select()
+        CB.pack()
 
         # --- Mode label (cleaner, with margin) ---
         label_frame = tk.Frame(self.root)
-        label_frame.pack(pady=10)   # bottom margin
+        label_frame.pack(pady=10)  # bottom margin
 
         self.mode_label = tk.Label(
             label_frame,
             text="Mode: normal",
             font=("Arial", 14, "bold"),
-            fg="#CCCCCC",            # softer light gray
-            bg="black"               # matches canvas background
+            fg="#CCCCCC",  # softer light gray
+            bg="black",  # matches canvas background
         )
-
 
     def next_mode(self):
         self.mode_index = (self.mode_index + 1) % len(self.MODES)
@@ -94,6 +100,13 @@ class MemoryGUI:
         b = int(255 - 200 * t)
 
         return f"#{r:02x}{g:02x}{b:02x}"
+
+    def toggle_slow_motion(self):
+        self.slow_motion = not self.slow_motion
+        if self.slow_motion:
+            self.sleep_time = 0.005
+        else:
+            self.sleep_time = 0
 
     def draw(self):
         t = time.time_ns()
