@@ -76,7 +76,7 @@ def attack_access(controller, d=1):
     for i in range(1, (d + 1)):
         controller.read(bank, row - (i))
         controller.read(bank, row + (i))
-    attack_access.hammered_time += 1
+        attack_access.hammered_time += 2
 
 
 attack_access.target_row = 50  # example
