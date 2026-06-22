@@ -52,7 +52,7 @@ def discovery_access(controller, bank):
     controller.read(bank, row)
 
     discovery_access.counter[bank] += 1
-    if discovery_access.counter[bank] >= 300:
+    if discovery_access.counter[bank] >= (REFRESHCYCLE/4):
         discovery_access.counter[bank] = 0
         discovery_access.current_row[bank] = (row + 1) % controller.get_banksize()
 
