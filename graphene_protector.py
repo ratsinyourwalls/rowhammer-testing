@@ -6,14 +6,16 @@ class GrapheneProtector:
         self.controller = controller
 
         # After how many accesses should we refresh?
-        self.treshold = controller.refreshcycle * 0.15
+        self.treshold = controller.get_treshold() / 2
         # On refresh triggeered, distance of neighbours to refresh
         self.ref_dist = 1
 
         # table_size > (refreshcycle / treshold) - 1
         # size of the misra table for each bank
         # Formula given by the paper
-        self.table_size = math.ceil(controller.refreshcycle / self.treshold) + 1
+        self.table_size = (
+            math.ceil(controller.refreshcycle / controller.get_treshold()) + 1
+        )
 
         banks = controller.get_banks()
         self.misra = []
@@ -27,7 +29,7 @@ class GrapheneProtector:
 
         # We refresh if the count is a multiple of treshold
         if t > 0 and (t % self.treshold == 0):
-            print(f"GRAPHENE: Triggered refresh from {bank}:{row}")
+            print(f"GRAPHENE: Triggered refresh from {bank}:{row}, t={t}")
 
             # Refresh rows at increasing distance
             for d in range(self.ref_dist):
