@@ -32,3 +32,19 @@ Le celle si dividono in
 - Anticelle rappresentano 0 con 1 e 1 con 0, un errore di disturbanza è 0 -> 1
 A seconda del produttore, ram possono contenere principalmente celle,
 anticelle, o un misto.
+
+
+# Progetto
+## Scaling down
+Abbiamo effettuato uno scaling del refresh cycle, e del treshold per
+gli errori di disturbo, di un fattore 200 rispetto a valori reali.
+Questo ci serve per rendere il problema trattabile velocemente e fare una
+dimostrazione visiva, e non dovrebbe in generale modificare la frequenza di
+flip per refresh cycle. 
+
+### Effetti su PARA
+Questo scaling però urta PARA, la cui probabilità di flip va settata in
+funzione solo del treshold per gli errori di disturbo. Visto che questo è 200
+volte più piccolo, la probabilità dovrà essere notevolmente superiore, e
+l'efficenza peggiore. Nella paper propongono un p = 0.001 che sembra essere
+abbondantemente sicuro, per noi una p = 0.04 è il minimo per la sicurezza.

@@ -39,29 +39,25 @@ class MemoryGUI:
         canvas_frame.pack(pady=10)
 
         self.canvas = tk.Canvas(
-                canvas_frame, 
-                width=width, 
-                height=height, 
-                bg="black",
-                highlightthickness=0
-                )
+            canvas_frame, width=width, height=height, bg="black", highlightthickness=0
+        )
         self.canvas.pack()
         self.root.protocol("WM_DELETE_WINDOW", self.close)
 
         # put the buttons side by side
         button_frame = tk.Frame(self.root, bg="black")
         button_frame.pack(pady=5)
-        
+
         tk.Button(
-            button_frame, 
-            text="Next mode", 
+            button_frame,
+            text="Next mode",
             command=self.next_mode,
             bg="#222222",
             fg="white",
             activebackground="#444444",
-            activeforeground="white"
+            activeforeground="white",
         ).pack(side="left", padx=5)
-        
+
         tk.Button(
             button_frame,
             text="Reset flips",
@@ -69,9 +65,9 @@ class MemoryGUI:
             bg="#222222",
             fg="white",
             activebackground="#444444",
-            activeforeground="white"
+            activeforeground="white",
         ).pack(side="left", padx=5)
-        
+
         tk.Button(
             button_frame,
             text="Reset statistics",
@@ -79,19 +75,19 @@ class MemoryGUI:
             bg="#222222",
             fg="white",
             activebackground="#444444",
-            activeforeground="white"
+            activeforeground="white",
         ).pack(side="left", padx=5)
 
         # slow motion
         CB = tk.Checkbutton(
-            self.root, 
-            text="Slow motion", 
+            self.root,
+            text="Slow motion",
             command=self.toggle_slow_motion,
             bg="black",
             fg="white",
             selectcolor="black",
             activebackground="black",
-            activeforeground="white"
+            activeforeground="white",
         )
         CB.select()
         CB.pack(pady=5)
@@ -109,7 +105,6 @@ class MemoryGUI:
         )
         self.mode_label.pack()
 
-
         # ---- Stats panel ----
         self.stats_frame = tk.Frame(self.root, bg="black", bd=2, relief="ridge")
         self.stats_frame.pack(pady=10, fill="x")
@@ -122,7 +117,7 @@ class MemoryGUI:
             bg="black",
             anchor="w",
             padx=10,
-            pady=5
+            pady=5,
         )
         self.stats_label.pack(fill="x")
 
@@ -171,17 +166,17 @@ class MemoryGUI:
             self.sleep_time = 0
 
     def update_stats(self):
-        reads = refreshes =  safety_refreshes = flips = 0
+        reads = refreshes = safety_refreshes = flips = 0
         for bank in range(0, self.controller.get_banks()):
             reads += self.controller.get_stat_reads(bank)
             refreshes += self.controller.get_stat_refresh(bank)
             safety_refreshes += self.controller.get_stat_safety_refresh(bank)
             flips += self.controller.get_stat_flips(bank)
-        
+
         percentage = reads / (reads + safety_refreshes) * 100
 
         self.stats_label.config(
-                text=f"Reads: {reads}   Refreshes:   {refreshes}   Flips: {flips}   Safety Refreshes: {safety_refreshes}   Efficiency: {percentage:.3f}%"
+            text=f"Reads: {reads}   Refreshes:   {refreshes}   Flips: {flips}   Safety Refreshes: {safety_refreshes}   Efficiency: {percentage:.3f}%"
         )
 
     def draw(self):
@@ -254,6 +249,6 @@ class MemoryGUI:
                 self.canvas.create_rectangle(
                     x, y, x + row_width, y + row_height, fill=color, outline=""
                 )
-        
+
         self.update_stats()
         self.root.update()

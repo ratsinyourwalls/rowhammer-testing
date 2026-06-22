@@ -8,17 +8,17 @@ from gui import MemoryGUI as gui
 class MemoryController:
     # The MemoryController will refresh every refreshcycle writes or skips.
     def __init__(self, banks, banksize, refreshcycle):
-        self.memory = Memory(banks, banksize)
+        self.memory = Memory(banks, banksize, refreshcycle * 0.15)
         self.refreshcycle = refreshcycle
         self.readcounts = [0] * banks
         self.protector = None
         self.gui = None
-        
+
         # useful for statistics
         self.stat_reads = [0] * banks
         self.stat_safety_refresh = [0] * banks
         self.stat_refresh = [0] * banks
-        #self.stat_flips = [0] * banks
+        # self.stat_flips = [0] * banks
 
     def register_protector(self, protector):
         self.protector = protector
@@ -81,11 +81,10 @@ class MemoryController:
 
     def get_stat_flips(self, bank):
         return self.memory.get_stat_flips(bank)
-    
+
     def reset_stats(self):
         banks = self.get_banks()
         self.stat_reads = [0] * banks
         self.stat_safety_refresh = [0] * banks
         self.stat_refresh = [0] * banks
         self.memory.reset_stat_flips()
-

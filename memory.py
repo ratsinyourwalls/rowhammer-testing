@@ -8,7 +8,7 @@ The events are access, probability of flip, and whether a row has had a flip.
 
 class Memory:
     # A memory has banks, independent banks, and banksize rows whithin each one
-    def __init__(self, nbanks, banksize):
+    def __init__(self, nbanks, banksize, treshold):
         # blank memory
         # number of banks and size
         self.banks = nbanks
@@ -22,6 +22,7 @@ class Memory:
         self.gui = None
 
         self.stat_flips = [0] * nbanks
+        self.treshold = treshold
 
     # return number of banks
     def get_banks(self):
@@ -65,7 +66,7 @@ class Memory:
     # read doesn't actually read the value, it counts one access to the row
     def read(self, bank, row):
         if bank < 0 or bank >= self.banks or row < 0 or row >= self.banksize:
-            #print("Out of bounds:", bank, row)
+            # print("Out of bounds:", bank, row)
             return
         self.accesses[bank][row] += 1
         self.probs[bank][row] = 0
@@ -101,14 +102,13 @@ class Memory:
         if row % 2 == 1:
             return 0
 
-        THRESHOLD = 500
-        MAXW = 100
+        MAXW = self.treshold / 2
 
         w = self.probs[bank][row]
-        if w < THRESHOLD:
+        if w < self.treshold:
             return 0
         else:
-            return min((w - THRESHOLD) / MAXW, 1.0)
+            return min((w - self.treshold) / MAXW, 1.0)
 
     def get_stat_flips(self, bank):
         return self.stat_flips[bank]
