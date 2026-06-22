@@ -82,6 +82,9 @@ class MemoryController:
     def get_stat_flips(self, bank):
         return self.memory.get_stat_flips(bank)
 
+    def get_treshold(self):
+        return self.memory.treshold
+
     def reset_stats(self):
         banks = self.get_banks()
         self.stat_reads = [0] * banks
