@@ -98,7 +98,7 @@ class MemoryGUI:
         
         MB = tk.Checkbutton(
             check_frame,
-            text="Multi row activation",
+            text="Distance interference effects",
             command=self.toggle_multi_row,
             bg="black",
             fg="white",
