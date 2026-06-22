@@ -73,7 +73,10 @@ class Memory:
         self.update_neighbours(bank, row)
 
     def update_neighbours(self, bank, row):
-        weights = [1, 0.5, 0.2]
+        if not self.gui.is_multi_row():
+            weights = [1]
+        else:
+            weights = [1, 0.5, 0.2]
         for dist, w in enumerate(weights):
             self.update_probability(bank, row + (dist + 1), w)
             self.update_probability(bank, row - (dist + 1), w)

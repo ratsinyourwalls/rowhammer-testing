@@ -16,6 +16,7 @@ class MemoryGUI:
         self.refresh_flashes = {}
         self.sleep_time = 0.005
         self.slow_motion = True
+        self.multi_row = True
 
         self.row_flipped = [
             [False for _ in range(controller.get_banksize())]
@@ -77,10 +78,13 @@ class MemoryGUI:
             activebackground="#444444",
             activeforeground="white",
         ).pack(side="left", padx=5)
+        
+        check_frame = tk.Frame(self.root, bg="black")
+        check_frame.pack(pady=5)
 
         # slow motion
         CB = tk.Checkbutton(
-            self.root,
+            check_frame,
             text="Slow motion",
             command=self.toggle_slow_motion,
             bg="black",
@@ -90,7 +94,20 @@ class MemoryGUI:
             activeforeground="white",
         )
         CB.select()
-        CB.pack(pady=5)
+        CB.pack(side="left", padx=5)
+        
+        MB = tk.Checkbutton(
+            check_frame,
+            text="Multi row activation",
+            command=self.toggle_multi_row,
+            bg="black",
+            fg="white",
+            selectcolor="black",
+            activebackground="black",
+            activeforeground="white",
+        )
+        MB.select()
+        MB.pack(side="left", padx=5)
 
         # --- Mode label (cleaner, with margin) ---
         label_frame = tk.Frame(self.root, bg="black")
@@ -164,6 +181,12 @@ class MemoryGUI:
             self.sleep_time = 0.005
         else:
             self.sleep_time = 0
+    
+    def toggle_multi_row(self):
+        self.multi_row = not self.multi_row
+
+    def is_multi_row(self):
+        return self.multi_row
 
     def update_stats(self):
         reads = refreshes = safety_refreshes = flips = 0

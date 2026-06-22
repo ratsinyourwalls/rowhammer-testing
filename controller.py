@@ -88,3 +88,4 @@ class MemoryController:
         self.stat_safety_refresh = [0] * banks
         self.stat_refresh = [0] * banks
         self.memory.reset_stat_flips()
+    
