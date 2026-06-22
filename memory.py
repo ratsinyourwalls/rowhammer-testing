@@ -99,7 +99,7 @@ class Memory:
             self.flipped[bank][row] = True
 
     def flip_probability(self, bank, row):
-        if row % 2 == 1:
+        if (row + bank * 7) % 3 != 1 and (row + bank * 20) % 5 != 2:
             return 0
 
         MAXW = self.treshold / 2
