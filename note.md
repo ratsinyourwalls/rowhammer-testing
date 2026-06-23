@@ -28,23 +28,23 @@ un refresh ogni 64ms/8192 = 7.8us
 Quando una row viene chiusa e aperta ripetutamente, alcune celle in row adiacenti perdono carica a una velocità maggiore del normale. Se non riescono a tenerla per 64ms, si effettua un errore di disturbo.
 
 Le celle si dividono in 
-- Celle rappresentano 0 con 0 e 1 con 1, un errore di disturbanza è 1 -> 0
-- Anticelle rappresentano 0 con 1 e 1 con 0, un errore di disturbanza è 0 -> 1
+- Celle rappresentano 0 con 0 e 1 con 1, un errore di interferenza è 1 -> 0
+- Anticelle rappresentano 0 con 1 e 1 con 0, un errore di interferenza è 0 -> 1
 A seconda del produttore, ram possono contenere principalmente celle,
 anticelle, o un misto.
 
 
 # Progetto
 ## Scaling down
-Abbiamo effettuato uno scaling del refresh cycle, e del treshold per
-gli errori di disturbo, di un fattore 200 rispetto a valori reali.
+Abbiamo effettuato uno scaling del refresh cycle, e del threshold per
+gli errori di disturbo rispetto a valori reali.
 Questo ci serve per rendere il problema trattabile velocemente e fare una
 dimostrazione visiva, e non dovrebbe in generale modificare la frequenza di
 flip per refresh cycle. 
 
 ### Effetti su PARA
 Questo scaling però urta PARA, la cui probabilità di flip va settata in
-funzione solo del treshold per gli errori di disturbo. Visto che questo è 200
+funzione solo del threshold per gli errori di disturbo. Visto che questo è 200
 volte più piccolo, la probabilità dovrà essere notevolmente superiore, e
 l'efficenza peggiore. Nella paper propongono un p = 0.001 che sembra essere
 abbondantemente sicuro, per noi una p = 0.04 è il minimo per la sicurezza.

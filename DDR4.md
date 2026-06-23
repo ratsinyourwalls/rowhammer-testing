@@ -8,10 +8,10 @@ Within a chip, cells are organized hierarchically to provide high density and pe
 
 A bank comprises many(e.g. 128) subarrays. Each subarray contains a two-dimentional array of DRAM cells arranged in *rows* and *columns*.
 
-For our simulation we are only considering a single DRAM chip with 8(?) banks and ignoring subarrays.
+For our simulation we are only considering a single DRAM chip with 4 banks and ignoring subarrays.
 
 
 **DRAM Refresh** Cells throughout a DRAM chip have different retention times, ranging from milliseconds to hours.
 
-DRAM refresh is tipically every 32 or 64 ms according to DRAM specifications.
-I think we can keep 64 ms. We aren't actually using real time, are we? How does this translate to our simulation?
+DRAM refresh is typically every 32 or 64 ms according to DRAM specifications.
+We don't actually use real time, but we count the number of reads to define the refresh cycle.
