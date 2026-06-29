@@ -128,7 +128,7 @@ class MemoryGUI:
 
         self.stats_label = tk.Label(
             self.stats_frame,
-            text="Reads: 0   Refreshes: 0   Flips: 0",
+            text="Activations: 0   Refreshes: 0   Flips: 0",
             font=("Consolas", 12),
             fg="#00FF00",
             bg="black",
@@ -199,7 +199,7 @@ class MemoryGUI:
         percentage = reads / (reads + safety_refreshes) * 100
 
         self.stats_label.config(
-            text=f"Reads: {reads}   Refreshes:   {refreshes}   Flips: {flips}   Safety Refreshes: {safety_refreshes}   Efficiency: {percentage:.3f}%"
+            text=f"Activations: {reads}   Refreshes:   {refreshes}   Flips: {flips}   Safety Refreshes: {safety_refreshes}   Efficiency: {percentage:.3f}%"
         )
 
     def draw(self):

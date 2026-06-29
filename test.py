@@ -8,7 +8,7 @@ from para_protector import ParaProtector
 from graphene_protector import GrapheneProtector
 from gui import MemoryGUI
 
-BANKSIZE = 64
+BANKSIZE = 100
 REFRESHCYCLE = 5000
 controller = MemoryController(banks=4, banksize=BANKSIZE, refreshcycle=REFRESHCYCLE)
 protector = None

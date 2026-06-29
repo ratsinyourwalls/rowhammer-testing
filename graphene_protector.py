@@ -14,7 +14,7 @@ class GrapheneProtector:
         # size of the misra table for each bank
         # Formula given by the paper
         self.table_size = (
-            math.ceil(controller.refreshcycle / controller.get_treshold()) + 1
+            math.ceil(controller.refreshcycle / (controller.get_treshold()/2)) + 10
         )
 
         banks = controller.get_banks()
